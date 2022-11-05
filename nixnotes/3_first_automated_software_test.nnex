@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE NixNote-Export>
+<nixnote-export version="2" exportType="export" application="NixNote" applicationVersion="2.x">
+    <Note>
+        <Guid>52741ade-dc5e-4a72-8f77-6ceede2a9760</Guid>
+        <Title>Automated Software Testing, 3: first automated test</Title>
+        <Content><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE en-note SYSTEM 'http://xml.evernote.com/pub/enml2.dtd'><en-note>
+<br />
+<br />
+<ul>
+<li>command line applications</li>
+<li>to write simple blogs</li>
+<li>integration, system, unit tests are covered</li>
+</ul>
+<div>#56: Setting up your project</div>
+<div>
+<ul>
+<li>we need virtualenv, it might be already installed,
+otherwise</li>
+<ul>
+<li>either use pip install&nbsp;</li>
+<li>or on a linux you can use the provided package of your
+distribution</li>
+</ul>
+<li>type in the directory were you start your project</li>
+<ul>
+<li><span style="background-color: rgb(255, 255, 0);">virtualenv
+env --python=3.10</span></li>
+<ul>
+<li>instead of python=3.10 the instructor is using python 3.6</li>
+</ul>
+</ul>
+<li>vm is in the directory where we are</li>
+<ul>
+<li>it is copying everything, libraries, python</li>
+<li>reasoning: keep the version of libraries the same throughout
+the development of your software</li>
+</ul>
+<li>and in another project you might need other version</li>
+<ul>
+<li>&nbsp;that is why we use <span style=
+"background-color: rgb(255, 255, 0);">virtual
+environments</span></li>
+</ul>
+<li>every project should have its own virtual environment</li>
+<li>virtual environments are small</li>
+<ul>
+<li>even if you install hundreds of those, it should be ok</li>
+</ul>
+<li>actually our first project wouldn't need the virutalenv,
+however it is good practice</li>
+<li>in Pycharm you can add the python interpreter of the installed
+virtualenvironment below</li>
+<ul>
+<li>Project Settings -&gt; Add Interpreter -&gt; Virutalenv
+Environment -&gt; select Python binary</li>
+</ul>
+<li>we create a project blog (or folder blog and switch to that
+folder, select the virtualenv etc.)</li>
+<li><br /></li>
+</ul>
+<div><br /></div>
+<div>#57: Important about the naming of test files</div>
+<div>
+<p>In this course, I name my test files using this
+pattern:&nbsp;<code>*_test.py</code></p>
+<p>For example, <code>blog_test.py</code>, for tests related to the
+"blogs" of our application.</p>
+<p>However, <strong>it is better if you name them using this
+pattern</strong>:&nbsp;<code>test_*.py</code></p>
+<p>For example, <code>test_blog.py</code>.</p>
+<p>When I first recorded this course, it was very easy to tell the
+test runner to run tests using <code>*_test.py</code>, and I felt
+it was more readable that way. Nowadays, it is slightly more
+difficult to do so, so <strong>it's better if you follow</strong>
+<code>test_*.py</code>.</p>
+<p><br /></p>
+<p>#58: Writing our first test</p>
+<ul>
+<li>a blog usually has a title and content</li>
+<ul>
+<li>often much more, like metadata, author, dates, tags etc.</li>
+</ul>
+<li>we stick to a most basic representation</li>
+<li>our post is going to be a class, containing title and
+content</li>
+<ul>
+<li>the blog is containing multiple posts</li>
+</ul>
+<li>the blog is going to have the author</li>
+<li>write a post class which has a two properties</li>
+<ul>
+<li>a title and content</li>
+</ul>
+<li>after that</li>
+<li>in the tests folder we create a new python package</li>
+<ul>
+<li>and name it unit</li>
+</ul>
+<li>any methods, functions, classes you want to test, you gonna put
+them in the unit tests</li>
+<li>so accoding to #57 we will name our test test_post.py and put
+it in the unit folder (it belongs to the unit package created)</li>
+<li>the Unit Test classes always have to inherit from a particular
+other class, which is TestCase</li>
+</ul>
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#cc7832;">from </span>unittest <span style=
+"color:#cc7832;">import </span>TestCase</pre>
+<ul>
+<ul>
+<li>we also import our Post, so...<br />
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#cc7832;">from </span>post <span style=
+"color:#cc7832;">import </span>Post</pre></li>
+</ul>
+<li>our complete first unit test class</li>
+<ul>
+<li>
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style=
+"color:#cc7832;">class </span>TestPost(TestCase):<br />    <span style="color:#cc7832;">def </span><span style="color:#ffc66d;">test_create_post</span>(<span style="color:#94558d;">self</span>):<br />        p = Post(<span style="color:#6a8759;">'Test'</span><span style="color:#cc7832;">, </span><span style="color:#6a8759;">'Test content'</span>)<br /><br />        <span style="color:#94558d;">self</span>.assertEqual(<span style="color:#6a8759;">'Test'</span><span style="color:#cc7832;">, </span>p.title)<br />        <span style="color:#94558d;">self</span>.assertEqual(<span style="color:#6a8759;">'Test content'</span><span style="color:#cc7832;">, </span>p.content)<br /><br /></pre></li>
+</ul>
+<li>similar to other unit testing frameworks in C# like NUnit</li>
+<li>Tipp for the project:</li>
+<ul>
+<li>keep the file structure as simple as possible</li>
+<li>to make it easy on Pycharm</li>
+<li>to determine what is running and how things are working</li>
+</ul>
+<li><span style="background-color: rgb(255, 255, 0);">to run a unit
+test</span>, rightclick in Pycharm on the file</li>
+<ul>
+<li><span style="background-color: rgb(255, 255, 0);">and select
+Run Unittests for test_post.py</span></li>
+<li>or in my case: "Run Python Tests in test..."</li>
+</ul>
+<li>so assert check in Python using TestCase is like this:</li>
+<ul>
+<li><span style="background-color: rgb(255, 255, 0);"><font face=
+"andale mono">self.assertEqual('Test',
+p.title)</font></span><br /></li>
+</ul>
+<li>units tests</li>
+<ul>
+<li>for security, when you change something you have something
+reminding you how your system should work</li>
+<li>in this easy example the unit tests is showing what the title
+and content should be, up top</li>
+</ul>
+</ul>
+<div><span style="background-color: rgb(255, 255, 0);">#59: Testing
+dictionary equivalence</span></div>
+<div>
+<ul>
+<li>let's say our posts should be save to some database</li>
+<li>so we have to be able to display them as a dicitonary</li>
+<ul>
+<li>maybe they are beeing sent through a REST API</li>
+<li>and we may send some JSON of this post</li>
+</ul>
+<li>so we want a method now, which sends JSON which represents the
+blog post</li>
+<ul>
+<li>we could add a date in the JSON, if we needed it</li>
+</ul>
+<li>so in our class Post we just define a new method, which returns
+the JSON format</li>
+<li>in our test class, we create a new method to test this JSON
+method</li>
+<ul>
+<li>it ends up as</li>
+<ul>
+<li>
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#cc7832;">def </span><span style=
+"color:#ffc66d;">test_json</span>(<span style=
+"color:#94558d;">self</span>):<br />    p = Post(<span style=
+"color:#6a8759;">'Test'</span><span style=
+"color:#cc7832;">, </span><span style=
+"color:#6a8759;">'Test content'</span>)<br /><br />    <span style=
+"color:#94558d;">self</span>.assertDictEqual({<span style=
+"color:#6a8759;">'title'</span>: p.title<span style=
+"color:#cc7832;">, </span><span style=
+"color:#6a8759;">'content'</span>: p.content}<span style=
+"color:#cc7832;">, </span>p.json())<br /></pre></li>
+</ul>
+<li>Note:</li>
+<ul>
+<li><span style=
+"background-color: rgb(255, 255, 0);">self.assetDictEqual is useful
+to test values of a dictionary!</span></li>
+</ul>
+</ul>
+<li>you would be using these methods all the time when working with
+REST API and web development</li>
+<li>Note:</li>
+<ul>
+<li><span style="background-color: rgb(0, 255, 255);">you could add
+extras to the Post class,</span></li>
+<li>e.g. the __repr__ method</li>
+<li>or other methods to practice and test these methods</li>
+</ul>
+</ul>
+</div>
+<p><br /></p>
+<p><br /></p>
+</div>
+</div>
+</en-note>]]></Content>
+        <ContentLength>7775</ContentLength>
+        <Created>1667649317992</Created>
+        <Updated>1667690580394</Updated>
+        <Active>true</Active>
+        <UpdateSequenceNumber>0</UpdateSequenceNumber>
+        <NotebookGuid>0c5eda10-b64f-4bd0-b706-8f014d815707</NotebookGuid>
+        <Attributes>
+            <Author>Wolfgang</Author>
+        </Attributes>
+        <Dirty>true</Dirty>
+    </Note>
+</nixnote-export>
