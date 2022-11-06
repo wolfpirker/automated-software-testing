@@ -345,15 +345,161 @@ this&nbsp;</li>
 <li><span style="background-color: rgb(255, 255, 0);">so instead of
 doing it like this, we create a folder for integration
 tests!</span></li>
+</ul>
+<div><span style="background-color: rgb(255, 255, 0);">#63:
+Mocking, patching, and system tests</span></div>
+</div>
+<div>
+<ul>
+<li>we will bring our blog and posts together</li>
+<li>and create a basic interface, so that the user can create blogs
+and posts and read them and so on</li>
+<li>so we create the files:</li>
+<ul>
+<li>app.py</li>
+</ul>
+<li>so in app.py nothing special</li>
+<ul>
+<li>quite simple console application</li>
+<li>with some menu options</li>
+</ul>
+<li>the app.py is essentially a view on our entire system</li>
+<ul>
+<li>everything the user sees, everything the user interacts
+with</li>
+<li>a larger kind of integration test</li>
+</ul>
+<li>for app.py we create a own package for testing called
+"system"</li>
+<ul>
+<li>for our system tests</li>
+<li>a system test is a test, which tests throughout your whole
+system</li>
+</ul>
+<li>what methods should there be in app.py?</li>
+<ul>
+<li>menu() to show the menu options</li>
+</ul>
+<li>we notice a new issue:</li>
+<ul>
+<li>how to actually test printed output the console, which is not
+replicated in a object or returned?</li>
+<li>if we returned a value, we could just check the returned
+value</li>
+<li>we cannot extract the value from the function directly</li>
+</ul>
+<li>we should have a program, that reads what is printed to the
+console</li>
+<ul>
+<li>for that we use path() which is in the mock library</li>
+<li>mock is an additional package, might be required to install
+it</li>
+</ul>
+<li>patch()</li>
+<ul>
+<li>lets us patch something&nbsp;</li>
+<li>look at it as an outsider</li>
+<li>and lets us potentially change</li>
+<li>so we can patch the print function, so that it does something
+else</li>
+</ul>
+<li>we import the patch:<br />
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#cc7832;">try</span>:<br />    <span style=
+"color:#cc7832;">from </span>unittest.mock <span style=
+"color:#cc7832;">import </span>patch<br /><span style=
+"color:#cc7832;">except </span><span style=
+"color:#8888c6;">ImportError</span>:<br />    <span style=
+"color:#cc7832;">from </span>mock <span style=
+"color:#cc7832;">import </span>patch</pre></li>
+<li>so for our test on print_blogs() we could write the test method
+like this:<br />
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#cc7832;">def </span><span style=
+"color:#ffc66d;">test_print_blogs</span>(<span style=
+"color:#94558d;">self</span>):
+
+    <span style="font-size: 9.8pt;">blog = Blog(</span><span style=
+"font-size: 9.8pt; color: rgb(106, 135, 89);">'Test'</span><span style="font-size: 9.8pt; color: rgb(204, 120, 50);">, </span><span style="font-size: 9.8pt; color: rgb(106, 135, 89);">'Test Author'</span><span style="font-size: 9.8pt;">)</span></pre>
+<pre style=
+"font-family: 'JetBrains Mono', monospace; font-size: 9.8pt;">    app.blogs = {<span style="color:#6a8759;">'Test'</span>: blog}</pre>
+<pre>    <span style=
+"color:#cc7832;">with </span>patch(<span style="color:#6a8759;">'builtins.print'</span>) <span style="color:#cc7832;">as </span>mocked_print:<br />        app.print_blogs()<br />        mocked_print.assert_called_with(<span style="color:#6a8759;">'- Test by Test Author (0 posts)'</span>)</pre></li>
+<li><span style="background-color: rgb(255, 255, 0);">so we patch
+the print with mocked_print and then use mocked_print<br />
+to asset that the output sent to print was correct</span></li>
+<li>Note about the print function:</li>
+<ul>
+<li>since it is builtin function of Python, we can assume it works
+correctly; it does not matter that our program relies on it; and we
+mustn't test it</li>
+<li>when you use patch to patch the builtin print function, we
+don't use the builtin print</li>
+</ul>
+<li>Note:</li>
+<ul>
+<li>when our tests have shared parts of initial setup, we can
+implement the setUp method in our TestCase to do the first
+initialiazation steps, e.g. for our example we could do:<br />
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#cc7832;">def </span><span style=
+"color:#ffc66d;">setUp</span>(<span style=
+"color:#94558d;">self</span>):<br />    blog = Blog(<span style=
+"color:#6a8759;">'Test'</span><span style=
+"color:#cc7832;">, </span><span style=
+"color:#6a8759;">'Test Author'</span>)<br />    app.blogs = {<span style="color:#6a8759;">'Test'</span>: blog}</pre></li>
+<ul>
+<li>then we wouldn't need those two lines in our test methods!</li>
+</ul>
+</ul>
+</ul>
+<div><br /></div>
+<div>#64: Patching the input method and returning values</div>
+<div>
+<ul>
+<li>implemented alongside this section:</li>
+<ul>
+<li>print_blogs()</li>
+<li>show_menu() with input(MENU_PROMPT)</li>
+<li>the tests of that in test_app.py - first alone</li>
+</ul>
+<li>so first impelement test&nbsp;<span style=
+"color: rgb(255, 198, 109); font-family: 'JetBrains Mono', monospace; font-size: 9.8pt; background-color: rgb(43, 43, 43);">test_menu_calls_print_blogs</span>&nbsp;myself<br />
+</li>
+<ul>
+<li>&nbsp; <span style=
+"background-color: rgb(255, 255, 0);">issues: it asks for an input
+during the test; what to do about it?</span></li>
+<ul>
+<li><span style="background-color: rgb(255, 255, 0);">we patch the
+builtins.input method!</span><br />
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#cc7832;">with </span>patch(<span style=
+"color:#6a8759;">'builtins.input'</span>) <span style=
+"color:#cc7832;">as </span>mocked_input:</pre></li>
+<li>we then can give input instructions, example:<br />
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+mocked_input.side_effect = (<span style=
+"color:#6a8759;">'l'</span><span style=
+"color:#cc7832;">, </span><span style=
+"color:#6a8759;">'q'</span>)</pre></li>
+</ul>
 <li><br /></li>
+</ul>
 </ul>
 </div>
 </div>
 </div>
+</div>
 </en-note>]]></Content>
-        <ContentLength>13578</ContentLength>
+        <ContentLength>19528</ContentLength>
         <Created>1667649317992</Created>
-        <Updated>1667747479038</Updated>
+        <Updated>1667763084031</Updated>
         <Active>true</Active>
         <UpdateSequenceNumber>0</UpdateSequenceNumber>
         <NotebookGuid>0c5eda10-b64f-4bd0-b706-8f014d815707</NotebookGuid>
