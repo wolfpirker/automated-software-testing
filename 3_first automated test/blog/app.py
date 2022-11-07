@@ -31,26 +31,12 @@ def show_menu():
 
 def ask_create_blog():
     """ function to create basic blog entries"""
-    # Note: this function ended up quite a bit complex;
-    # course teacher suggestion: start simple and create a working test;
-    # then extend gradually , and test in between
     title = str(input("enter a title as blog title: \n"))
     if (len(title)) <= 3:
         print('blog title must contain more than 3 letters')
         return
     author = str(input("enter an author or keep blank: \n"))
     b = Blog(title, author)
-    # Note: instead just create blog without posts!
-    # while True:
-    #     # let user create several blog posts
-    #     print('create a new post')
-    #     title_pos = input("enter the post title (or leave blank to skip): \n")
-    #     if len(title_pos) <= 3:
-    #         print('skip')
-    #         break
-    #     else:
-    #         content = input("enter the content: \n")
-    #         b.create_post(title, content)
     answer = input("save blog y/n (y): ")
     if answer != 'n':
         blogs[b.title] = b

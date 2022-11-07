@@ -23,6 +23,15 @@ class AppTest(TestCase):
 
                 mocked_print.assert_called_with('- Test by Test Author (0 posts)')
 
+
+    def test_menu_calls_create_blog(self):
+        with patch('builtins.input') as mocked_input:
+            mocked_input.side_effect = ('c', 'Test Two', 'Test Author Two', 'y', 'q')
+            app.show_menu()
+
+            self.assertIsNotNone(app.blogs['Test Two'])
+
+
     def test_menu_prints_prompt(self):
         with patch('builtins.input', return_value='q') as mocked_input:
             app.show_menu()
@@ -83,12 +92,13 @@ class AppTest(TestCase):
 
     def test_print_post(self):
         post = Post('Post title', 'Post content')
-        # Note:
-        # better it would be actually to not rely on POST_TEMPLATE
-        # probably better to copy and paste the TEMPLATE here
-        # when it is messed up in app.py, this test case would actually fail!
-        # !!!
+        expected_print = """
+--- Post title ---
 
+Post content
+
+"""
         with patch('builtins.print') as mocked_print:
             app.print_post(post)
-            mocked_print.assert_called_with(app.POST_TEMPLATE.format('Post title', 'Post content'))
+
+            mocked_print.assert_called_with(expected_print)

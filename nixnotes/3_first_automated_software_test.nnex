@@ -537,16 +537,86 @@ them</li>
 <li>I tried to implement these methods first on my own, so I put
 some comments in the test_app.py file; also in app.py see commit 7
 changes</li>
+<ul>
+<li>what I learned:</li>
+<ul>
+<li><span style="background-color: rgb(255, 255, 0);">call the
+function in the test cases</span>, which the test case is
+about</li>
+<li>if it requires input, use <span style=
+"background-color: rgb(255, 255, 0);">mocked_input.sideeffect</span>s
+(patch 'builtins.input')</li>
+<li><span style="background-color: rgb(255, 255, 0);">each
+parameter in sideeffects is a own input!</span></li>
+<li>in task create blog:<br />
+&gt; also put&nbsp;<span style=
+"font-family: 'JetBrains Mono', monospace; font-size: 9.8pt; background-color: rgb(43, 43, 43); color: rgb(148, 85, 141);">self</span><span style="color: rgb(169, 183, 198); font-family: 'JetBrains Mono', monospace; font-size: 9.8pt; background-color: rgb(43, 43, 43);">.assertIsNotNone(app.blogs.get(</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 9.8pt; background-color: rgb(43, 43, 43); color: rgb(106, 135, 89);">'Test
+2'</span><span style=
+"color: rgb(169, 183, 198); font-family: 'JetBrains Mono', monospace; font-size: 9.8pt; background-color: rgb(43, 43, 43);">))</span><br />
+
+&gt; <span style="background-color: rgb(255, 255, 0);">compare
+fields of the object for equalness, not the object</span>
+itself</li>
+<li><span style="background-color: rgb(255, 255, 0);">first work on
+a basic implementation, than write a test, when it works
+extend</span></li>
 </ul>
+</ul>
+<li><br /></li>
+</ul>
+<div>#66:&nbsp;</div>
+<div>
+<ul>
+<li>this section is more about patching</li>
+<li>and about testing the menu options, e.g.</li>
+<ul>
+<li>
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style=
+"color:#ffc66d;">test_menu_calls_create_blog</span></pre></li>
+</ul>
+</ul>
+<div>#67: The TestCase setUp method</div>
+</div>
+<div>
+<ul>
+<li>
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#cc7832;">def </span><span style=
+"color:#ffc66d;">setUp</span>(<span style=
+"color:#94558d;">self</span>):</pre></li>
+<ul>
+<li>this function runs before each test</li>
+</ul>
+<li>we can use it for object, which are used independently on
+several methods</li>
+<li>does not matter, if some methods don't need those objects</li>
+<li>remember to not only rerun single tests, one by one, better to
+run all tests (of one or several files) together</li>
+<ul>
+<li>so when you work on method of you class, it might affect other
+tests, you might not think about</li>
+</ul>
+<li>next section is about Flask, how it works</li>
+<ul>
+<li>it is helpful if you have basic Flask knowledge
+beforehand!</li>
+</ul>
+</ul>
+<div><br /></div>
+</div>
+<div><br /></div>
 <div><br /></div>
 </div>
 </div>
 </div>
 </div>
 </en-note>]]></Content>
-        <ContentLength>21645</ContentLength>
+        <ContentLength>24319</ContentLength>
         <Created>1667649317992</Created>
-        <Updated>1667844893444</Updated>
+        <Updated>1667849641206</Updated>
         <Active>true</Active>
         <UpdateSequenceNumber>0</UpdateSequenceNumber>
         <NotebookGuid>0c5eda10-b64f-4bd0-b706-8f014d815707</NotebookGuid>
