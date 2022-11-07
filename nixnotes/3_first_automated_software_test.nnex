@@ -489,17 +489,64 @@ mocked_input.side_effect = (<span style=
 "color:#cc7832;">, </span><span style=
 "color:#6a8759;">'q'</span>)</pre></li>
 </ul>
-<li><br /></li>
 </ul>
 </ul>
+#65: Taking our patching further<br /></div>
+<div>
+<ul>
+<li>in this section we implement our show menu function fully and
+three additional functions of the menu:</li>
+<ul>
+<li>
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#ffc66d;">ask_create_blog</span>()</pre></li>
+<li><span style=
+"font-family: 'JetBrains Mono', monospace; font-size: 9.8pt; background-color: rgb(43, 43, 43); color: rgb(255, 198, 109);">
+ask_read_blog</span><span style=
+"color: rgb(169, 183, 198); font-family: 'JetBrains Mono', monospace; font-size: 9.8pt; background-color: rgb(43, 43, 43);">()</span>.</li>
+<li>
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#ffc66d;">ask_create_post</span>()</pre></li>
+</ul>
+<li>Note: the menu we will test in the end</li>
+<ul>
+<li>however, we have to change&nbsp;<span style=
+"color: rgb(255, 198, 109); font-family: 'JetBrains Mono', monospace; font-size: 9.8pt; background-color: rgb(43, 43, 43);">test_menu_calls_print_blogs()</span>,
+since the menu was changed we have to select input options in our
+test<br /></li>
+<ul>
+<li>we put in the inner block:<br />
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+mocked_input.side_effect = (<span style=
+"color:#6a8759;">'l'</span><span style=
+"color:#cc7832;">, </span><span style=
+"color:#6a8759;">'q'</span>)</pre></li>
+</ul>
+<li>also in&nbsp;<span style=
+"color: rgb(255, 198, 109); font-family: 'JetBrains Mono', monospace; font-size: 9.8pt; background-color: rgb(43, 43, 43);">test_menu_prints_prompt()</span>&nbsp;we
+have to put the <span style=
+"background-color: rgb(255, 255, 0);">return_value = 'q' in the
+patched input part</span>, due to changes in our show_menu
+function<br /></li>
+</ul>
+<li>first implementation of the new three functions and testing
+them</li>
+<li>I tried to implement these methods first on my own, so I put
+some comments in the test_app.py file; also in app.py see commit 7
+changes</li>
+</ul>
+<div><br /></div>
 </div>
 </div>
 </div>
 </div>
 </en-note>]]></Content>
-        <ContentLength>19528</ContentLength>
+        <ContentLength>21645</ContentLength>
         <Created>1667649317992</Created>
-        <Updated>1667763084031</Updated>
+        <Updated>1667844893444</Updated>
         <Active>true</Active>
         <UpdateSequenceNumber>0</UpdateSequenceNumber>
         <NotebookGuid>0c5eda10-b64f-4bd0-b706-8f014d815707</NotebookGuid>
