@@ -181,18 +181,103 @@ is using <span style=
 <li>next:</li>
 <ul>
 <li>how to make our system tests more readable</li>
+<li>make our system tests a bit better and nicer</li>
 </ul>
 </ul>
-<div><br /></div>
-<div><br /></div>
+<div>Refactoring Our System Tests</div>
+<div>
+<ul>
+<li>we extract a python file from the other system test file we
+have</li>
+<li>Note:&nbsp;</li>
+<ul>
+<li><span style="background-color: rgb(255, 255, 0);">the pattern
+of the new file must be different, from the pattern of the actual
+test files!</span></li>
+<li>so when we have test_*.py for the test file, as is the default,
+then we can name the new file with shared code base_test.py for
+example</li>
+</ul>
+<li>we the purpose:</li>
+<ul>
+<li>make shared code of the system tests reusable between several
+tests</li>
+</ul>
+<li>duplications e.g.:</li>
+<ul>
+<li>from app import app</li>
+<li>with app.test_client()</li>
+<li>and another thing later on, we will add</li>
+</ul>
+<li>in the new file, we will define a method which runs in every
+system test:</li>
+<ul>
+<li>we name it <span style=
+"background-color: rgb(255, 255, 0);">setUp()</span> <span style=
+"background-color: rgb(255, 255, 255);">with self as parameter in
+BaseTest class</span></li>
+</ul>
+<li>in each system test files we can then import:<br />
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style=
+"color:#cc7832;">from </span>app.tests.system.base_test <span style="color:#cc7832;">import </span>BaseTest</pre></li>
+<ul>
+<li>to import the shared parts</li>
+<li>like&nbsp;<span style=
+"font-family: 'JetBrains Mono', monospace; font-size: 9.8pt; background-color: rgb(43, 43, 43); color: rgb(148, 85, 141);">self</span><span style="color: rgb(169, 183, 198); font-family: 'JetBrains Mono', monospace; font-size: 9.8pt; background-color: rgb(43, 43, 43);">.app()</span>&nbsp;for
+the connection (<span style=
+"color: rgb(169, 183, 198); font-family: 'JetBrains Mono', monospace; font-size: 9.8pt; background-color: rgb(43, 43, 43);">app.test_client</span>)<br />
+</li>
+</ul>
+<li>this test (TestHome) does not know anymore that it is in fact a
+test client</li>
+<ul>
+<li>in this regard it is now nicer</li>
+</ul>
+<li>so we mustn't worry that it is a test client versus a real
+client</li>
+<li>we no longer depending on UnitTest for each test file that we
+have</li>
+<li>instead we inherit from BaseTest</li>
+<li>but is this really nicer?</li>
+<ul>
+<li>this mean two things now:</li>
+<ul>
+<li>if we rename our app.py file</li>
+</ul>
+<li>another thing we should do:</li>
+<ul>
+<li>set app.testing = True in our test cases</li>
+</ul>
+<li>it tells Flask that for the lifetime of the app we a in testing
+mode</li>
+<li>if there are any exceptions when running our app, they are
+surfaced slightly differently&nbsp;</li>
+<ul>
+<li>for nicer testing outputs</li>
+</ul>
+</ul>
+<li><span style="background-color: rgb(255, 255, 0);">when in the
+future we want to add content to the setUp() it is easy to
+do</span></li>
+<ul>
+<li>i<span style="background-color: rgb(255, 255, 0);">nstead of
+doing it in every test file, we only do it in
+base_test.py!</span></li>
+<li><br /></li>
+</ul>
+<li><br /></li>
+</ul>
+</div>
 </div>
 <div><br />
 <br />
 <br /></div>
 </en-note>]]></Content>
-        <ContentLength>7788</ContentLength>
+        <ContentLength>10779</ContentLength>
         <Created>1668547750204</Created>
-        <Updated>1668551499930</Updated>
+        <Updated>1668553040362</Updated>
         <Active>true</Active>
         <UpdateSequenceNumber>0</UpdateSequenceNumber>
         <NotebookGuid>0c5eda10-b64f-4bd0-b706-8f014d815707</NotebookGuid>
