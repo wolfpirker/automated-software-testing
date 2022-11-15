@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE NixNote-Export>
+<nixnote-export version="2" exportType="export" application="NixNote" applicationVersion="2.x">
+    <Note>
+        <Guid>757bd1f6-405a-472b-ba34-3e959ad7f6d8</Guid>
+        <Title>Automated Software Testing, 4: Testing a Flask Endpoint</Title>
+        <Content><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE en-note SYSTEM 'http://xml.evernote.com/pub/enml2.dtd'><en-note>
+introduction
+<div>
+<ul>
+<li>what is Flask?</li>
+<li>how can we create a simple app?</li>
+<li>how can we test it?</li>
+</ul>
+<div><br /></div>
+Setting Our Project up:</div>
+<div>
+<ul>
+<li>commands to create our base:</li>
+<ul>
+<li>virtualenv venv --python=python3.10</li>
+<ul>
+<li>venv is just how we name our virtualenv folder</li>
+<li>some people prefer to call it env</li>
+<li>we set the default python</li>
+</ul>
+</ul>
+<li>mkdir app</li>
+<ul>
+<li>we create a new sub folder app for our flask app</li>
+</ul>
+<li>we open Pycharm and select the Python of our venv folder</li>
+<ul>
+<li>in the project settings</li>
+</ul>
+<li>we create a python package "tests" in app folder</li>
+<li>we create files: app.y</li>
+<ul>
+<li><span style=
+"background-color: rgb(255, 255, 0);">requirements.txt</span></li>
+<ul>
+<li>this file is just going to show libraries that we want to
+use</li>
+<li>we can use pip to install all the packages in this file</li>
+<li>or we can click on install inside pycharm</li>
+</ul>
+</ul>
+</ul>
+<div><br /></div>
+Creating Our Flask App</div>
+<div>
+<ul>
+<li>focus of the course as you might know:</li>
+<ul>
+<li>testing of our Web applications and REST APIs using Python</li>
+<li>and writing the automated tests themselves</li>
+</ul>
+<li>so throughout the course we will be using incrementally complex
+Flask apps</li>
+<li>covered what they mean and how they are coded</li>
+<li>the first section will be just a very basic Flask app</li>
+<li>so our first small Flask app:<br />
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#cc7832;">from </span>flask <span style=
+"color:#cc7832;">import </span>Flask<br /><br /><span style=
+"color:#808080;"># we just give app the name of the Flask object...<br /></span>app = Flask(__name__)<br /><span style="color:#808080;"># it is always a unique string!<br /></span><span style="color:#808080;"># __name__ as we know from sections before: it contains the path of the<br /></span><span style="color:#808080;"># application we are running<br /></span><span style="color:#808080;"><br /></span><span style="color:#bbb529;">@app.route</span>(<span style="color:#6a8759;">'/'</span>)<br /><span style="color:#cc7832;">def </span><span style="color:#ffc66d;">home</span>():<br />    <span style="color:#cc7832;">return </span>{<span style="color:#6a8759;">'message'</span>: <span style="color:#6a8759;">'Hello, world!'</span>}<br /><br /><span style="color:#cc7832;">if </span>__name__ == <span style="color:#6a8759;">'__main__'</span>:<br />    app.run()</pre></li>
+<ul>
+<li>Note: for the file that you run</li>
+<ul>
+<li>__name__ == 'main'</li>
+</ul>
+<li>we have an important variable called app in this file</li>
+<ul>
+<li>that is why we don't do app.run() without the condition</li>
+<li>so when it is imported outside: then app is not run()!</li>
+</ul>
+</ul>
+<li>something specific to Flask:</li>
+<ul>
+<li>you cannot return a dictionary from an endpoint</li>
+<li>so we also import the jsonify function from flask</li>
+<li>so we return:<br />
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#cc7832;">return </span>jsonify({<span style=
+"color:#6a8759;">'message'</span>: <span style=
+"color:#6a8759;">'Hello, world!'</span>})</pre></li>
+</ul>
+</ul>
+<div>Our First System Test</div>
+<ul>
+<li>we looked at what unit tests and integration tests are,</li>
+<ul>
+<li>recap in video (integration tests: test the link of two
+integral parts)</li>
+<li>unit test: clear</li>
+</ul>
+<li>system test</li>
+<ul>
+<li>tests the entire system from top to bottom, if it were a client
+of the system</li>
+</ul>
+<li>our system exposes only a single entry point</li>
+<ul>
+<li>which is "/"</li>
+<li>in our case: it is the whole system to the client</li>
+</ul>
+<li>so our test is going to run our app and call that end
+point</li>
+<li>and make sure that the output is as it should be</li>
+<li>we create a new folder system with a file test_home.py</li>
+<li>here we also import app&nbsp;</li>
+<ul>
+<li>
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#cc7832;">from </span>app <span style=
+"color:#cc7832;">import </span>app</pre></li>
+<li>we need it to access the route url</li>
+</ul>
+<li>now that we got a app here, we want to make a request to the
+app</li>
+<li><span style="background-color: rgb(255, 255, 0);">Flask gives
+you some testing features</span>, that are quite appreciated</li>
+<li>we don't have to run the app full, as we would when we call
+app.py</li>
+<li><span style="background-color: rgb(255, 255, 0);">Flask allows
+us to give us a test client, that allows us to make requests but
+doesn't run everything in the background</span></li>
+<li>so then in our test file we now have:</li>
+<ul>
+<li>
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#cc7832;">from </span>unittest <span style=
+"color:#cc7832;">import </span>TestCase<br /></pre>
+<pre style=
+"font-family: 'JetBrains Mono', monospace; font-size: 9.8pt;"><span style="color:#cc7832;">from </span>app.app <span style="color:#cc7832;">import </span>app</pre>
+<pre><br /><span style=
+"color:#cc7832;">class </span>TestHome(TestCase):<br />    <span style="color:#cc7832;">def </span><span style="color:#ffc66d;">test_home</span>(<span style="color:#94558d;">self</span>):<br />        <span style="color:#cc7832;">with </span>app.test_client() <span style="color:#cc7832;">as </span>c:<br />            <span style="color:#72737a;">resp </span>= c.get(<span style="color:#6a8759;">'/'</span>)</pre></li>
+<li><span style="background-color: rgb(255, 255, 0);">c.get('/') is
+making a GET request with '/' as endpoint</span></li>
+</ul>
+<li>then we still need the asset method to check whether the result
+is as expected:<br />
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style=
+"color:#94558d;">self</span>.assertEqual(resp.status_code<span style="color:#cc7832;">, </span><span style="color:#6897bb;">200</span>)</pre></li>
+<ul>
+<li>we use assetEqual</li>
+<li><span style="background-color: rgb(255, 255, 0);">200 is the
+default in Flask</span> of a succesful request</li>
+<li>404: not found</li>
+<li>500: internal server error</li>
+</ul>
+<li>when we run this&nbsp;</li>
+<ul>
+<li>it should be successful, without error</li>
+<li>Note:&nbsp;</li>
+<ul>
+<li><span style="background-color: rgb(255, 0, 0);"><font color=
+"#FFFFFF">a possible error</font></span> might be when, the
+test_client() method is not found:<br />
+wrong import path!</li>
+</ul>
+<li>of course we can also check the data, which is coming from our
+endpoint is this Hello world message</li>
+<li>we can use the python builtin json package</li>
+<li>when the data comes back it is a string, so we have to convert
+is using <span style=
+"background-color: rgb(255, 255, 0);">json.loads()</span></li>
+<li>so finally we can add following assertEqual:<br />
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style=
+"color:#94558d;">self</span>.assertEqual(<br />    json.loads(resp.get_data())<span style="color:#cc7832;">,<br /></span><span style="color:#cc7832;">    </span>{<span style="color:#6a8759;">'message'</span>: <span style="color:#6a8759;">'Hello, world!'</span>}<br />)</pre></li>
+</ul>
+<li>next:</li>
+<ul>
+<li>how to make our system tests more readable</li>
+</ul>
+</ul>
+<div><br /></div>
+<div><br /></div>
+</div>
+<div><br />
+<br />
+<br /></div>
+</en-note>]]></Content>
+        <ContentLength>7788</ContentLength>
+        <Created>1668547750204</Created>
+        <Updated>1668551499930</Updated>
+        <Active>true</Active>
+        <UpdateSequenceNumber>0</UpdateSequenceNumber>
+        <NotebookGuid>0c5eda10-b64f-4bd0-b706-8f014d815707</NotebookGuid>
+        <Attributes>
+            <Author>Wolfgang</Author>
+        </Attributes>
+        <Dirty>true</Dirty>
+    </Note>
+</nixnote-export>
