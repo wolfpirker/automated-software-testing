@@ -304,14 +304,133 @@ extra argument</li>
 <div>#80: Setting up generic BaseTest</div>
 <div>
 <ul>
-<li><br /></li>
+<li>we are going to test all the database stuff</li>
+<li>we create a python file <span style=
+"background-color: rgb(255, 255, 0);">base_test.py</span> inside
+tests directory</li>
+<li><span style="background-color: rgb(255, 255, 0);">this file is
+used for all the tests which are using the database</span></li>
+<ul>
+<li>all children classes of this base test to use our database</li>
+<li>it was similar in last section, now it will be even more
+powerful base test</li>
 </ul>
+<li>comment in our BaseTest class:</li>
+<ul>
+<li><span style="background-color: rgb(255, 255, 0);">This class
+should be the parent class to each non-unit test.<br />
+It allows for instantiation of the database dynamically<br />
+and makes sure that it is a new, blank database each
+time.</span><br /></li>
+<li>otherwise you might get the tests failing, when data in a
+database is in a particular state!</li>
+</ul>
+<li>so the database should be blank, and the baseTest purpose is to
+do all the setup of the database</li>
+<ul>
+<li>at the end of the test, also should make sure, database is
+blank again</li>
+<li>so you remove any unwanted accidents</li>
+</ul>
+<li>the imports in this file:<br />
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#cc7832;">from </span>unittest <span style=
+"color:#cc7832;">import </span>TestCase<br /><span style=
+"color:#cc7832;">from </span>app <span style=
+"color:#cc7832;">import </span>app<br /><span style=
+"color:#cc7832;">from </span>db <span style=
+"color:#cc7832;">import </span>db</pre></li>
+<ul>
+<li>db is required to initialize our database and create our
+tables</li>
+<li>it belongs to SQLAlchemy instance</li>
+</ul>
+<li>BaseTest</li>
+<ul>
+<li>setup the database, and give us the test client</li>
+<li>and make sure the database is absolutely erased and blank
+afterwards</li>
+</ul>
+<li>we classes methods:</li>
+<ul>
+<li><span style="background-color: rgb(255, 255, 0);">setUp</span>
+- run before every test</li>
+<li><span style=
+"background-color: rgb(255, 255, 0);">tearDown</span> - runs after
+every test</li>
+</ul>
+<li>in setUp make sure the database exists</li>
+<li>so our methods from this lesson:<br />
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#cc7832;">def </span><span style=
+"color:#ffc66d;">setUp</span>(<span style=
+"color:#94558d;">self</span>):<br />    <span style=
+"color:#808080;"># Make sure database exists<br /></span><span style="color:#808080;">    </span>app.config[<span style="color:#6a8759;">'SQLALCHEMY_DATABASE_URI'</span>] = <span style="color:#6a8759;">'sqlite:///'<br /></span><span style="color:#6a8759;">    </span><span style="color:#cc7832;">with </span>app.app_context():<br />        db.init_app(app)<br />        db.create_all()<br />    <span style="color:#808080;"># Get a test client<br /></span><span style="color:#808080;">    </span><span style="color:#94558d;">self</span>.app = app.test_client()<br />    <span style="color:#94558d;">self</span>.app_context = app.app_context</pre></li>
+<li>Notes:</li>
+<ul>
+<li>in this tests we don't want to use MySQL or Postgres, since it
+is more effort to create a new one and delete the old one</li>
+<li><span style="background-color: rgb(255, 255, 0);">however, when
+tests should run in production, it best thing to do, to use the
+same database as you would in production</span></li>
+<li><span style="background-color: rgb(255, 255, 0);">Flask
+specific: is the context manager</span></li>
+<ul>
+<li><span style="background-color: rgb(255, 255, 0);">the block
+with app.app.context()</span></li>
+</ul>
+<li>it tells our SQLAlchemy instance:</li>
+<ul>
+<li>it should be initialized app</li>
+<li>then it create all our tables</li>
+</ul>
+<li><span style=
+"background-color: rgb(255, 255, 0);">app</span></li>
+<ul>
+<li>as you see in app.py</li>
+<li>it is Flask(__name__)</li>
+<li>the app name</li>
+<li>the file in which app is imported, we are importing the
+<span style="background-color: rgb(255, 255, 0);">Items</span>
+resource</li>
+<li>the Items resource is importing the <span style=
+"background-color: rgb(255, 255, 0);">ItemModel</span></li>
+<li>ItemModel is a db.Model which specifies the table name and the
+set of columns</li>
+<li>so SQLAlchemy knows by that: the models required with
+structures</li>
+</ul>
+<li>so this method:</li>
+<ul>
+<li><span style="background-color: rgb(255, 255, 0);">gives us a
+test client of the app</span></li>
+<li>the app_context is allowing us to access the app context later
+on in our tests</li>
+</ul>
+</ul>
+<li>and the tearDown method:<br />
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#cc7832;">def </span><span style=
+"color:#ffc66d;">tearDown</span>(<span style=
+"color:#94558d;">self</span>):<br />    <span style=
+"color:#808080;"># Database is blank<br /></span><span style=
+"color:#808080;">    </span><span style=
+"color:#cc7832;">with </span>app.app_context():<br />        db.session.remove()<br />        db.drop_all()</pre></li>
+<ul>
+<li>quite clear code - what it does…</li>
+</ul>
+</ul>
+<div><br /></div>
+<div><br /></div>
 </div>
 </div>
 </en-note>]]></Content>
-        <ContentLength>15248</ContentLength>
+        <ContentLength>20444</ContentLength>
         <Created>1669848066033</Created>
-        <Updated>1669935745764</Updated>
+        <Updated>1669937812596</Updated>
         <Active>true</Active>
         <UpdateSequenceNumber>0</UpdateSequenceNumber>
         <NotebookGuid>0c5eda10-b64f-4bd0-b706-8f014d815707</NotebookGuid>
