@@ -423,14 +423,69 @@ on in our tests</li>
 <li>quite clear code - what it does…</li>
 </ul>
 </ul>
+<div>#81: Integration testing</div>
+<div>
+<ul>
+<li>test whether we can save it to database and remove it from the
+database</li>
+<ul>
+<li>in order for that we also create integration tests</li>
+</ul>
+<li>we create tests/integration/models/test_item.py</li>
+<ul>
+<li>again we inherit from BaseTest</li>
+</ul>
+<li>in order to access the database we have to use a context
+manager</li>
+<ul>
+<li>first step in this test_item file:<br />
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#cc7832;">from </span>models.item <span style=
+"color:#cc7832;">import </span>ItemModel<br /><span style=
+"color:#cc7832;">from </span>tests.unit.base_test <span style=
+"color:#cc7832;">import </span>BaseTest<br /><br /><span style=
+"color:#cc7832;">class </span>ItemTest(BaseTest):<br />    <span style="color:#cc7832;">def </span><span style="color:#ffc66d;">test_crud</span>(<span style="color:#94558d;">self</span>):<br />        <span style="color:#cc7832;">with </span><span style="color:#94558d;">self</span>.app_context():<br />            item = ItemModel(<span style="color:#6a8759;">'test'</span><span style="color:#cc7832;">, </span><span style="color:#6897bb;">19.99</span>)<br /><br />            item.save_to_db()</pre></li>
+<li>this will save a model in the SQLite database</li>
+<li><span style="background-color: rgb(255, 255, 0);">Note: this
+import requires the ItemModel from resources/item.py including the
+ItemList!</span></li>
+<li><span style="background-color: rgb(255, 255, 0);">issue here:
+it is possible that save_to_db() does not create anything! see
+below code for additional assert</span></li>
+</ul>
+<li>the complete version:</li>
+<ul>
+<li>
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#cc7832;">def </span><span style=
+"color:#ffc66d;">test_crud</span>(<span style=
+"color:#94558d;">self</span>):<br />    <span style=
+"color:#cc7832;">with </span><span style=
+"color:#94558d;">self</span>.app_context():<br />        item = ItemModel(<span style="color:#6a8759;">'test'</span><span style="color:#cc7832;">, </span><span style="color:#6897bb;">19.99</span>)<br /><br />        <span style="color:#94558d;">self</span>.assertIsNone(ItemModel.find_by_name(<span style="color:#6a8759;">'test'</span>)<span style="color:#cc7832;">,<br /></span><span style="color:#cc7832;">                          </span><span style="color:#6a8759;">"Found an item with name {}, but expected not to."</span>.format(item.name))<br /><br />        item.save_to_db()<br /><br />        <span style="color:#94558d;">self</span>.assertIsNotNone(ItemModel.find_by_name(<span style="color:#6a8759;">'test'</span>)) # 1<br /><br />        item.delete_from_db()<br /><br />        <span style="color:#94558d;">self</span>.assertIsNone(ItemModel.find_by_name(<span style="color:#6a8759;">'test'</span>))</pre></li>
+<li>#1: finding an item by its name</li>
+<ul>
+<li>find_by_name filters the query by a name and gives us the first
+item returned</li>
+</ul>
+<li>it is possible to create more error messages</li>
+<ul>
+<li>we created our integration test, how to access the app context
+maanger</li>
+<li>really important when programming in Flask</li>
+</ul>
+</ul>
+</ul>
 <div><br /></div>
+</div>
 <div><br /></div>
 </div>
 </div>
 </en-note>]]></Content>
-        <ContentLength>20444</ContentLength>
+        <ContentLength>23759</ContentLength>
         <Created>1669848066033</Created>
-        <Updated>1669937812596</Updated>
+        <Updated>1670768644918</Updated>
         <Active>true</Active>
         <UpdateSequenceNumber>0</UpdateSequenceNumber>
         <NotebookGuid>0c5eda10-b64f-4bd0-b706-8f014d815707</NotebookGuid>
