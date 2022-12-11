@@ -476,6 +476,13 @@ maanger</li>
 <li>really important when programming in Flask</li>
 </ul>
 </ul>
+<li>in the next section</li>
+<ul>
+<li>we will expand our REST API and include the concept of
+stores</li>
+<li>it lets us test many more complex concepts, what to do when
+relational data relationsships start getting into way</li>
+</ul>
 </ul>
 <div><br /></div>
 </div>
@@ -483,9 +490,9 @@ maanger</li>
 </div>
 </div>
 </en-note>]]></Content>
-        <ContentLength>23759</ContentLength>
+        <ContentLength>23993</ContentLength>
         <Created>1669848066033</Created>
-        <Updated>1670768644918</Updated>
+        <Updated>1670780527517</Updated>
         <Active>true</Active>
         <UpdateSequenceNumber>0</UpdateSequenceNumber>
         <NotebookGuid>0c5eda10-b64f-4bd0-b706-8f014d815707</NotebookGuid>
