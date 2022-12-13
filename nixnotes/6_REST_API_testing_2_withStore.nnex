@@ -223,15 +223,122 @@ tests are running! and it didn't have to create the tables, so is a
 bit faster</span></li>
 </ul>
 </ul>
-<li><br /></li>
 </ul>
-</div>
 <div><br /></div>
+</div>
+<div>#88: Finishing our Store tests</div>
+<div>
+<ul>
+<li>we create a new file /<span style=
+"background-color: rgb(255, 255, 0);">unit</span>/models/test_store.py</li>
+<li><span style="background-color: rgb(255, 255, 0);">for testing
+models/store.py</span></li>
+<li>some insights on using an ORM like SQLAlchemy</li>
+<ul>
+<li>ORM: Object Relational Mapping</li>
+<li>makes it easy for you to interact with other objects</li>
+<li><span style="background-color: rgb(255, 255, 0);">whenever you
+use any of the database releationsships:</span></li>
+<ul>
+<li><span style="background-color: rgb(255, 255, 0);">your unit
+test is stopping being a unit test!</span></li>
+<li><span style="background-color: rgb(255, 255, 0);">dependencies
+on database and item model</span></li>
+<li><span style="background-color: rgb(255, 255, 0);">the json
+method is not unit testable</span></li>
+</ul>
+</ul>
+<li>so actually only the init method is a unit test</li>
+<ul>
+<li>also save_to_db, delete_from_db is not!</li>
+</ul>
+<li>so our only unit test for the store.py is like this:</li>
+<ul>
+<li>
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style=
+"color:#cc7832;">class </span>StoreTest(UnitBaseTest):<br />    <span style="color:#cc7832;">def </span><span style="color:#ffc66d;">test_create_store</span>(<span style="color:#94558d;">self</span>):<br />        store = StoreModel(<span style="color:#6a8759;">'test'</span>)<br /><br />        <span style="color:#94558d;">self</span>.assertEqual(store.name<span style="color:#cc7832;">, </span><span style="color:#6a8759;">'test'</span><span style="color:#cc7832;">,<br /></span><span style="color:#cc7832;">                         </span><span style="color:#6a8759;">"The name of the store after creation does not equal the constructor argument."</span>)</pre></li>
+</ul>
+<li><span style="background-color: rgb(255, 255, 0);">we go to the
+integration tests and create a new test_store.py</span></li>
+<ul>
+<li><span style="background-color: rgb(255, 255, 0);">we want to
+test the json method</span></li>
+<li><span style="background-color: rgb(255, 255, 0);">and also the
+CRUD on database</span></li>
+</ul>
+<li>e.g. we can test</li>
+<ul>
+<li>1) after creating the StoreModel is it actually empty?</li>
+<li>we mustn't check whether the name is correct, since this is
+tested in the unit test</li>
+<li>2) also CRUD operations</li>
+<ul>
+<li>we need the app context</li>
+<li>when we are&nbsp;</li>
+</ul>
+</ul>
+<li>code:</li>
+<ul>
+<li>1)<br />
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#cc7832;">def </span><span style=
+"color:#ffc66d;">test_create_store</span>(<span style=
+"color:#94558d;">self</span>):<br />    store = StoreModel(<span style="color:#6a8759;">'test'</span>)<br />    <span style="color:#94558d;">self</span>.assertListEqual(store.items.all()<span style="color:#cc7832;">, </span>[]<span style="color:#cc7832;">,<br /></span><span style="color:#cc7832;">                         </span><span style="color:#6a8759;">"The store's items length was not 0 even though no items were added."</span>)</pre></li>
+<li>2)<br />
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#cc7832;">def </span><span style=
+"color:#ffc66d;">test_crud</span>(<span style=
+"color:#94558d;">self</span>):<br />    <span style=
+"color:#cc7832;">with </span><span style=
+"color:#94558d;">self</span>.app_context():<br />        store = StoreModel(<span style="color:#6a8759;">'test'</span>)<br /><br />        <span style="color:#94558d;">self</span>.assertIsNone(StoreModel.find_by_name(<span style="color:#6a8759;">'test'</span>)<span style="color:#cc7832;">, </span><span style="color:#6a8759;">"Found an store with name 'test' before save_to_db"</span>)<br /><br />        store.save_to_db()<br /><br />        <span style="color:#94558d;">self</span>.assertIsNotNone(StoreModel.find_by_name(<span style="color:#6a8759;">'test'</span>)<span style="color:#cc7832;">,<br /></span><span style="color:#cc7832;">                             </span><span style="color:#6a8759;">"Did not find an store with name 'test' after save_to_db"</span>)<br /><br />        store.delete_from_db()<br /><br />        <span style="color:#94558d;">self</span>.assertIsNone(StoreModel.find_by_name(<span style="color:#6a8759;">'test'</span>)<span style="color:#cc7832;">, </span><span style="color:#6a8759;">"Found an store with name 'test' after delete_from_db"</span>)</pre></li>
+<li>Note:</li>
+<ul>
+<li>a items need a store, in order that it's item of the store
+beeing valid</li>
+<li>not the other way round - the store does not need items</li>
+<li>we have created the object</li>
+<li>saved it</li>
+<li>made sure it does exist</li>
+<li>delete it from the database</li>
+<li>and assertItIsNone</li>
+<li>better also add Error Messages</li>
+</ul>
+<li>3)</li>
+<li>important: when you have an item - does it appear on the store?
+test the relationship</li>
+<ul>
+<li>Code:<br />
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#cc7832;">def </span><span style=
+"color:#ffc66d;">test_store_relationship</span>(<span style=
+"color:#94558d;">self</span>):<br />    <span style=
+"color:#cc7832;">with </span><span style=
+"color:#94558d;">self</span>.app_context():<br />        store = StoreModel(<span style="color:#6a8759;">'test'</span>)<br />        item = ItemModel(<span style="color:#6a8759;">'test_item'</span><span style="color:#cc7832;">, </span><span style="color:#6897bb;">19.99</span><span style="color:#cc7832;">, </span><span style="color:#6897bb;">1</span>)<br /><br />        store.save_to_db()<br />        item.save_to_db()<br /><br />        <span style="color:#94558d;">self</span>.assertEqual(store.items.count()<span style="color:#cc7832;">, </span><span style="color:#6897bb;">1</span>)<br />        <span style="color:#94558d;">self</span>.assertEqual(store.items.first().name<span style="color:#cc7832;">, </span><span style="color:#6a8759;">'test_item'</span>)</pre></li>
+<li>Note: Store has to be save to the database first!</li>
+<li>before item exists</li>
+<li>we can count items, it should be just one</li>
+<li>and retrieve the first</li>
+<li>this test takes a bit more time</li>
+</ul>
+<li>4)&nbsp;</li>
+<ul>
+<li>the json test</li>
+<li>similar to what we had in earlier sections!</li>
+</ul>
+</ul>
+</ul>
+<div><br /></div>
+</div>
 <br /></div>
 </en-note>]]></Content>
-        <ContentLength>10067</ContentLength>
+        <ContentLength>16612</ContentLength>
         <Created>1670780557798</Created>
-        <Updated>1670966665871</Updated>
+        <Updated>1670969972691</Updated>
         <Active>true</Active>
         <UpdateSequenceNumber>0</UpdateSequenceNumber>
         <NotebookGuid>0c5eda10-b64f-4bd0-b706-8f014d815707</NotebookGuid>
