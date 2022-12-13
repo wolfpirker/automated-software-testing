@@ -102,15 +102,53 @@ as list:<br />
 <span style=
 "color:#cc7832;">class </span>ItemList(Resource):<br />    <span style="color:#cc7832;">def </span><span style="color:#ffc66d;">get</span>(<span style="color:#94558d;">self</span>):<br />        <span style="color:#cc7832;">return </span>{<span style="color:#6a8759;">'items'</span>: [x.json() <span style="color:#cc7832;">for </span>x <span style="color:#cc7832;">in </span>ItemModel.query.all()]}</pre></li>
 <li>similar to that the StoreList</li>
-<li><br /></li>
+</ul>
+<div>#86: Testing foreign key constrains with Python</div>
+<div>
+<ul>
+<li>Note about the state of the existing tests in the base
+code:</li>
+<ul>
+<li><span style="background-color: rgb(255, 255, 0);">tests do not
+work yet; since the contracts were changed! additional parameters
+etc.!</span></li>
+<li><span style="background-color: rgb(255, 255, 255);">storeId of
+Init method!</span></li>
+</ul>
+<li>Note:</li>
+<ul>
+<li><span style="background-color: rgb(255, 255, 255);">stupid
+issues with lines:</span></li>
+<ul>
+<li><span style="background-color: rgb(255, 0, 0);"><font color=
+"#FFFFFF">from collections import Mapping</font></span><br /></li>
+<li>must be following:<br />
+<span style="background-color: rgb(255, 255, 0);">from
+collections.abc import Mapping</span><br /></li>
+<li>even in modules like <span style=
+"background-color: rgb(255, 255, 255);">api_jwt</span></li>
+</ul>
+<li>so it is important to know of caveat or use your final database
+(type)</li>
+</ul>
+<li>with some slight code changes, at least the integration\models
+test should be working</li>
 </ul>
 <div><br /></div>
+<ul>
+<ul>
+<ul>
+<li><br /></li>
+</ul>
+</ul>
+</ul>
+</div>
 <div><br /></div>
 <br /></div>
 </en-note>]]></Content>
-        <ContentLength>4096</ContentLength>
+        <ContentLength>5205</ContentLength>
         <Created>1670780557798</Created>
-        <Updated>1670790713076</Updated>
+        <Updated>1670964424435</Updated>
         <Active>true</Active>
         <UpdateSequenceNumber>0</UpdateSequenceNumber>
         <NotebookGuid>0c5eda10-b64f-4bd0-b706-8f014d815707</NotebookGuid>
