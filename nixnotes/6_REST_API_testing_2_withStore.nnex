@@ -135,20 +135,103 @@ collections.abc import Mapping</span><br /></li>
 test should be working</li>
 </ul>
 <div><br /></div>
+<div>#87:&nbsp;Unit testing models and SQLAlchemy mappers</div>
 <ul>
+<li>another integration test: for the relationsship between
+entities</li>
+<li>code for this new test:</li>
 <ul>
+<li>
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#cc7832;">def </span><span style=
+"color:#ffc66d;">test_store_relationsship</span>(<span style=
+"color:#94558d;">self</span>):<br />    <span style=
+"color:#cc7832;">with </span><span style=
+"color:#94558d;">self</span>.app_context():<br />        store = StoreModel(<span style="color:#6a8759;">'test_store'</span>)<br />        item = ItemModel(<span style="color:#6a8759;">'test'</span><span style="color:#cc7832;">, </span><span style="color:#6897bb;">19.99</span><span style="color:#cc7832;">, </span><span style="color:#6897bb;">1</span>)<br /><br />        store.save_to_db()<br />        item.save_to_db()<br /><span style="color:#808080;"><br /></span><span style="color:#808080;">        </span><span style="color:#94558d;">self</span>.assertEqual(item.store.name<span style="color:#cc7832;">, </span><span style="color:#6a8759;">'test_store'</span>)</pre></li>
+</ul>
+<li><span style="background-color: rgb(255, 255, 255);">now we move
+over to the unit tests...</span></li>
+<li><span style="background-color: rgb(255, 255, 0);">SQLAlchemy is
+only going to check the foreign key constraints, when it writes to
+the database!</span></li>
+<li>&nbsp;the tests do in its current state not pass!</li>
 <ul>
+<li><span style=
+"background-color: rgb(255, 255, 0);">InvalidRequestError is
+raised,</span> <span style=
+"background-color: rgb(255, 255, 255);">with message:</span><br />
+<span style="background-color: rgb(255, 255, 255);">when
+initializing mapper mapped class</span> ItemModel-&gt;items,
+expression 'StoreModel' <span style=
+"background-color: rgb(255, 255, 255);">failed to locate a name
+('StoreModel')</span>. If this is a class name, <span style=
+"background-color: rgb(255, 255, 0);">consider adding this
+relationship() to the &lt;class</span> <span style=
+"background-color: rgb(255, 255, 255);">'</span>models.item.ItemModel'&gt;
+class <span style="background-color: rgb(255, 255, 0);">after both
+dependent classes have been defined</span>.<br /></li>
+</ul>
+<li>Note: we did not import the StoreModel to the unit test; we
+need that!</li>
+<ul>
+<li>in the unit test we are not inherting from BaseTest, and we are
+not importing StoreModel!</li>
+<li><span style="background-color: rgb(255, 255, 0);">we have a few
+options:</span></li>
+<ul>
+<li>one: we import the StoreModel<br />
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#cc7832;">from </span>models.store <span style=
+"color:#cc7832;">import </span>StoreModel</pre>
+then the two tests is already working!</li>
+<li>however this solution is not great, since the import is labeled
+as unused and gray!</li>
+<li>two: import the BaseTest and use that as superclass; then we
+can run our unit tests<br />
+&gt; also not too great! since duration time is now much longer;
+more is happening then required!</li>
+<li><span style="background-color: rgb(255, 255, 0);">third</span>:
+import app, but not in this file but inside the unit package:
+<span style="background-color: rgb(255, 255, 0);">create
+file</span> unit_base_test.py<br />
+with following contents:<br />
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#cc7832;">from </span>app <span style=
+"color:#cc7832;">import </span>app<br /><span style=
+"color:#cc7832;">from </span>unittest <span style=
+"color:#cc7832;">import </span>TestCase<br /><br /><span style=
+"color:#cc7832;">class </span>UnitBaseTest(TestCase):<br />    <span style="color:#cc7832;">pass</span></pre>
+this also has now a unused import, however since it is only one
+file it is not too bad - instead of having it in every unit test
+file you have!</li>
+<li>so we import<br />
+<span style=
+"font-family: 'JetBrains Mono', monospace; font-size: 9.8pt; background-color: rgb(43, 43, 43); color: rgb(204, 120, 50);">
+from</span> <span style=
+"color: rgb(169, 183, 198); font-family: 'JetBrains Mono', monospace; font-size: 9.8pt; background-color: rgb(43, 43, 43);">
+tests.unit.unit_base_test</span> <span style=
+"font-family: 'JetBrains Mono', monospace; font-size: 9.8pt; background-color: rgb(43, 43, 43); color: rgb(204, 120, 50);">
+import</span> <span style=
+"color: rgb(169, 183, 198); font-family: 'JetBrains Mono', monospace; font-size: 9.8pt; background-color: rgb(43, 43, 43);">
+UnitBaseTest</span>&nbsp;and then inherit
+from&nbsp;UnitBaseTest</li>
+<li><span style="background-color: rgb(255, 255, 0);">now also the
+tests are running! and it didn't have to create the tables, so is a
+bit faster</span></li>
+</ul>
+</ul>
 <li><br /></li>
-</ul>
-</ul>
 </ul>
 </div>
 <div><br /></div>
 <br /></div>
 </en-note>]]></Content>
-        <ContentLength>5205</ContentLength>
+        <ContentLength>10067</ContentLength>
         <Created>1670780557798</Created>
-        <Updated>1670964424435</Updated>
+        <Updated>1670966665871</Updated>
         <Active>true</Active>
         <UpdateSequenceNumber>0</UpdateSequenceNumber>
         <NotebookGuid>0c5eda10-b64f-4bd0-b706-8f014d815707</NotebookGuid>
