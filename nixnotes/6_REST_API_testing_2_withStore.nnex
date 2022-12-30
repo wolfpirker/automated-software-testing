@@ -332,13 +332,28 @@ test the relationship</li>
 </ul>
 </ul>
 </ul>
-<div><br /></div>
+<div>next:</div>
+</div>
+<div>
+<ul>
+<li>test our REST API using the Request module</li>
+<ul>
+<li><span style="background-color: rgb(255, 255, 0);">we start
+firing request to our running API</span></li>
+<li><span style="background-color: rgb(255, 255, 0);">this next
+section will be more interesting!</span></li>
+<li><span style="background-color: rgb(255, 255, 0);">we will add
+users to our REST API</span></li>
+<li><br /></li>
+</ul>
+</ul>
 </div>
 <br /></div>
+<div><br /></div>
 </en-note>]]></Content>
-        <ContentLength>16612</ContentLength>
+        <ContentLength>17051</ContentLength>
         <Created>1670780557798</Created>
-        <Updated>1670969972691</Updated>
+        <Updated>1670970212282</Updated>
         <Active>true</Active>
         <UpdateSequenceNumber>0</UpdateSequenceNumber>
         <NotebookGuid>0c5eda10-b64f-4bd0-b706-8f014d815707</NotebookGuid>

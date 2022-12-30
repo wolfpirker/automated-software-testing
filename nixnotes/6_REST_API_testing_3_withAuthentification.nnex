@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE NixNote-Export>
+<nixnote-export version="2" exportType="export" application="NixNote" applicationVersion="2.x">
+    <Note>
+        <Guid>70f8c93c-c518-4900-809e-f5094e29e0af</Guid>
+        <Title>Automated Software Testing 7: REST API Testing part 3</Title>
+        <Content><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE en-note SYSTEM 'http://xml.evernote.com/pub/enml2.dtd'><en-note>
+in this section<br />
+<br />
+<ul>
+<li>test the entire API also with functionalities such as</li>
+<ul>
+<li>user authentification</li>
+</ul>
+<li>system tests for the entire API</li>
+<li>as start code we just use the code from the last section</li>
+</ul>
+<div><br /></div>
+<div>#92: Setting up the project</div>
+<div>
+<ul>
+<li>like mentioned: we start with a copy of the previous code</li>
+<li>some modifications:</li>
+<ul>
+<li>we create a new user model with username and password, file
+is</li>
+<ul>
+<li>models/user.py</li>
+</ul>
+<li>in here we have save_to_db and find_by methods similarly like
+in other models</li>
+<li>we create a resources/user.py to register users by sending a
+POST request with username and password</li>
+<li>see the github repository for the code</li>
+</ul>
+<li>then we also import the resource in app.py and create the
+endpoint</li>
+<ul>
+<li>
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style=
+"color:#cc7832;">from </span>resources.user <span style="color:#cc7832;">import </span>UserRegister
+
+...
+
+<span style=
+"font-size: 9.8pt;">api.add_resource(UserRegister</span><span style="font-size: 9.8pt; color: rgb(204, 120, 50);">, </span><span style="font-size: 9.8pt; color: rgb(106, 135, 89);">'/register'</span><span style="font-size: 9.8pt;">)</span></pre></li>
+</ul>
+<li><br /></li>
+</ul>
+</div>
+<div><br /></div>
+<div>93: changes to the lectures code</div>
+<div>
+<ul>
+<li>there were changes in the Werkzeug package, so there are
+<span style="background-color: rgb(255, 255, 0);">two changes
+required to the lectures code</span></li>
+<li>instead of</li>
+<ul>
+<li>&nbsp; &nbsp; from werkzeug.security import safe_str_cmp</li>
+<li>we should put:<br />
+&nbsp; &nbsp; <span style=
+"background-color: rgb(255, 255, 0);">import hmac</span><br /></li>
+</ul>
+<li>also instead of:</li>
+<ul>
+<li>&nbsp; &nbsp; if user and safe_str_cmp(user.password,
+password):<br /></li>
+<li>we should use it like this:</li>
+<ul>
+<li>&nbsp; &nbsp; <span style=
+"background-color: rgb(255, 255, 0);">if user and
+hmac.compare_digest(user.password, password):</span></li>
+</ul>
+</ul>
+</ul>
+<div>94: Allowing users to login</div>
+</div>
+<div>
+<ul>
+<li>we will be creating the auth endpoint, using Flask.jwt</li>
+<ul>
+<li>jwt: JSON web token</li>
+</ul>
+<li>to let users login</li>
+<li>we create the file security.py, which will contain two
+essential functions</li>
+<li><span style="background-color: rgb(255, 255, 0);">we are not
+implementing the endpoint ourself, since the hmac package provides
+functionality for that</span></li>
+<ul>
+<li>but we still have to define what happens if we enter a wrong
+user login</li>
+</ul>
+<li>see the code of methods authenticate and identity and comments
+inside the code</li>
+<li>next we import flask_jwt in <span style=
+"background-color: rgb(255, 255, 0);">app.py</span></li>
+<li>we also add a secret key, which is used to encode cookies</li>
+<ul>
+<li>we not going to use cookies, however it is good practice to
+have a secret key</li>
+<li>
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+app.secret_key = <span style=
+"color:#6a8759;">'wolf123'<br /></span>api = Api(app)<br /><br />jwt = JWT(app<span style="color:#cc7832;">, </span>authenticate<span style="color:#cc7832;">, </span>identity)  <span style="color:#808080;"># /auth</span></pre></li>
+</ul>
+<li><span style="background-color: rgb(255, 255, 0);">we also add a
+error handler endpoint in app.py</span></li>
+<ul>
+<li>which is specific to Flask</li>
+<li>whenever a JWT authentification fails - when a error gets
+raised inside our application</li>
+<ul>
+<li>
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style=
+"color:#bbb529;">@app.errorhandler</span>(JWTError)<br /><span style="color:#cc7832;">def </span><span style="color:#ffc66d;">auth_error_handler</span>(<span style="color:#72737a;">err</span>):<br />    <span style="color:#cc7832;">return </span>jsonify({<span style="color:#6a8759;">'message'</span>}<span style="color:#cc7832;">, </span><span style="color:#6a8759;">'Could not authenticate. Did you include a valid Authorization header?'</span>)</pre></li>
+</ul>
+<li>now we can authenticate users</li>
+</ul>
+</ul>
+<div><br /></div>
+</div>
+</en-note>]]></Content>
+        <ContentLength>4471</ContentLength>
+        <Created>1672394492851</Created>
+        <Updated>1672400434830</Updated>
+        <Active>true</Active>
+        <UpdateSequenceNumber>0</UpdateSequenceNumber>
+        <NotebookGuid>0c5eda10-b64f-4bd0-b706-8f014d815707</NotebookGuid>
+        <Attributes>
+            <Author>Wolfgang</Author>
+        </Attributes>
+        <Dirty>true</Dirty>
+    </Note>
+</nixnote-export>
