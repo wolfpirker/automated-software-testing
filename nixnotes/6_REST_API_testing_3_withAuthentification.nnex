@@ -125,12 +125,112 @@ raised inside our application</li>
 <li>now we can authenticate users</li>
 </ul>
 </ul>
+<div>#95: Writing unit tests</div>
+<div>
+<ul>
+<li>we create unit tests for our user model</li>
+<li>the only thing we can test here in a unit test:</li>
+<ul>
+<li>the init method</li>
+</ul>
+<li>example code:</li>
+</ul>
+<div>
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#cc7832;">from </span>models.user <span style=
+"color:#cc7832;">import </span>UserModel<br /><span style=
+"color:#cc7832;">from </span>tests.unit.unit_base_test <span style=
+"color:#cc7832;">import </span>UnitBaseTest<br /><br /><br /><span style="color:#cc7832;">class </span>UserTest(UnitBaseTest):<br />    <span style="color:#cc7832;">def </span><span style="color:#ffc66d;">test_create_user</span>(<span style="color:#94558d;">self</span>):<br />        user = UserModel(<span style="color:#6a8759;">'test'</span><span style="color:#cc7832;">, </span><span style="color:#6a8759;">'abcd'</span>)<br /><br />        <span style="color:#94558d;">self</span>.assertEqual(user.username<span style="color:#cc7832;">, </span><span style="color:#6a8759;">'test'</span><span style="color:#cc7832;">,<br /></span><span style="color:#cc7832;">                         </span><span style="color:#6a8759;">"The name of the user after creation does not equal the constructor argument."</span>)<br />        <span style="color:#94558d;">self</span>.assertEqual(user.password<span style="color:#cc7832;">, </span><span style="color:#6a8759;">'abcd'</span><span style="color:#cc7832;">,<br /></span><span style="color:#cc7832;">                         </span><span style="color:#6a8759;">"The password of the user after creation does not equal the constructor argument."</span>)</pre></div>
+<ul>
+<li>next the integration models test of user</li>
+<li>we test all the crud operations</li>
+<li>in case it is still missing add the find_by_id method to
+models/user.py</li>
+<ul>
+<li>
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#bbb529;">@classmethod<br /></span><span style=
+"color:#cc7832;">def </span><span style=
+"color:#ffc66d;">find_by_id</span>(<span style=
+"color:#94558d;">cls</span><span style=
+"color:#cc7832;">, </span>_id):<br />    <span style=
+"color:#cc7832;">return </span><span style=
+"color:#94558d;">cls</span>.query.filter_by(<span style=
+"color:#aa4926;">id</span>=_id).first()</pre></li>
+</ul>
+<li>in the integrations test we will test both the methods:</li>
+<ul>
+<li>
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#cc7832;">from </span>models.user <span style=
+"color:#cc7832;">import </span>UserModel<br /><span style=
+"color:#cc7832;">from </span>tests.integration.integration_base_test <span style="color:#cc7832;">import </span>BaseTest<br /><br /><br /><span style="color:#cc7832;">class </span>UserTest(BaseTest):<br />    <span style="color:#cc7832;">def </span><span style="color:#ffc66d;">test_crud</span>(<span style="color:#94558d;">self</span>):<br />        <span style="color:#cc7832;">with </span><span style="color:#94558d;">self</span>.app_context():<br />            user = UserModel(<span style="color:#6a8759;">'test'</span><span style="color:#cc7832;">, </span><span style="color:#6a8759;">'abcd'</span>)<br /><br />            <span style="color:#94558d;">self</span>.assertIsNone(UserModel.find_by_username(<span style="color:#6a8759;">'test'</span>)<span style="color:#cc7832;">, </span><span style="color:#6a8759;">"Found an user with name 'test' before save_to_db"</span>)<br />            <span style="color:#94558d;">self</span>.assertIsNone(UserModel.find_by_id(<span style="color:#6897bb;">1</span>)<span style="color:#cc7832;">, </span><span style="color:#6a8759;">"Found an user with id '1' before save_to_db"</span>)<br /><br />            user.save_to_db()<br /><br />            <span style="color:#94558d;">self</span>.assertIsNotNone(UserModel.find_by_username(<span style="color:#6a8759;">'test'</span>)<span style="color:#cc7832;">,<br /></span><span style="color:#cc7832;">                                 </span><span style="color:#6a8759;">"Did not find an user with name 'test' after save_to_db"</span>)<br />            <span style="color:#94558d;">self</span>.assertIsNotNone(UserModel.find_by_id(<span style="color:#6897bb;">1</span>)<span style="color:#cc7832;">, </span><span style="color:#6a8759;">"Did not find an user with id '1' after save_to_db"</span>)<br /></pre></li>
+</ul>
+<li>it is possible to also separate these test to have two
+methods</li>
+<ul>
+<li>one for find_by_username the other find_by_id</li>
+</ul>
+<li><span style="background-color: rgb(255, 255, 0);">in the next
+lesson we will start creating our system tests</span></li>
+<ul>
+<li><span style="background-color: rgb(255, 255, 0);">which is the
+focus of this section</span></li>
+<li>it will be interesting, since we are using the <span style=
+"background-color: rgb(255, 255, 0);">Requests
+library&nbsp;</span></li>
+<li><br /></li>
+</ul>
+</ul>
+#96: the setupClass method in the BaseTest</div>
+<div>
+<ul>
+<li><span style="background-color: rgb(255, 255, 0);">first we will
+improve the integration_base_test by implementing the</span>
+<span style="background-color: rgb(0, 255, 255);">setUpClass</span>
+<span style="background-color: rgb(255, 255, 0);">class
+method</span></li>
+<li><span style="background-color: rgb(0, 255, 255);">setUpClass
+runs once for each test case - (or every BaseTest
+class)</span></li>
+<li>wheras the setUp method runs for every test method</li>
+<li>the tearDown method is not changed, otherwise after applying
+our changes:<br />
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style=
+"color:#cc7832;">class </span>BaseTest(TestCase):<br />    SQLALCHEMY_DATABASE_URI = <span style="color:#6a8759;">"sqlite://"<br /></span><span style="color:#6a8759;"><br /></span><span style="color:#6a8759;">    </span><span style="color:#bbb529;">@classmethod<br /></span><span style="color:#bbb529;">    </span><span style="color:#cc7832;">def </span><span style="color:#ffc66d;">setUpClass</span>(<span style="color:#94558d;">cls</span>):<br />        app.config[<span style="color:#6a8759;">'SQLALCHEMY_DATABASE_URI'</span>] = BaseTest.SQLALCHEMY_DATABASE_URI<br />        app.config[<span style="color:#6a8759;">'DEBUG'</span>] = <span style="color:#cc7832;">False<br /></span><span style="color:#cc7832;">        with </span>app.app_context():<br />            db.init_app(app)<br /><br />    <span style="color:#cc7832;">def </span><span style="color:#ffc66d;">setUp</span>(<span style="color:#94558d;">self</span>):<br />        <span style="color:#cc7832;">with </span>app.app_context():<br />            db.create_all()<br />        <span style="color:#94558d;">self</span>.app = app.test_client<br />        <span style="color:#94558d;">self</span>.app_context = app.app_context</pre></li>
+<li>we then add the <span style=
+"background-color: rgb(0, 255, 255);">package</span> <span style=
+"background-color: rgb(0, 255, 255);">system</span> in tests
+directory - just like we have integration and unit here</li>
+<ul>
+<li>tests for test_item, test_store, test_user</li>
+</ul>
+<li><span style="background-color: rgb(255, 255, 0);">in these
+tests we are going to be writing API requests that are going to be
+sent, to our test client</span></li>
+<li><span style="background-color: rgb(255, 255, 0);">we are
+receiving back what the API would send a real client</span></li>
+<li><span style="background-color: rgb(255, 255, 0);">then we are
+going to work with that and make sure our API is working
+correctly</span></li>
+<li><br /></li>
+</ul>
+<div>#97: testing user registration</div>
 <div><br /></div>
+<ul>
+<li><br /></li>
+</ul>
+</div>
 </div>
 </en-note>]]></Content>
-        <ContentLength>4471</ContentLength>
+        <ContentLength>12317</ContentLength>
         <Created>1672394492851</Created>
-        <Updated>1672400434830</Updated>
+        <Updated>1672405380925</Updated>
         <Active>true</Active>
         <UpdateSequenceNumber>0</UpdateSequenceNumber>
         <NotebookGuid>0c5eda10-b64f-4bd0-b706-8f014d815707</NotebookGuid>
