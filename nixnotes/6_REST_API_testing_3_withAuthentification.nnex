@@ -218,19 +218,222 @@ receiving back what the API would send a real client</span></li>
 <li><span style="background-color: rgb(255, 255, 0);">then we are
 going to work with that and make sure our API is working
 correctly</span></li>
-<li><br /></li>
 </ul>
-<div>#97: testing user registration</div>
 <div><br /></div>
+<div>#97: testing user registration</div>
 <ul>
-<li><br /></li>
+<li>what to test?</li>
+<ul>
+<li>that we can add users, if they don't exist&nbsp;</li>
+<li>JWT token authentification</li>
 </ul>
+<li>we start writing the code for the file
+tests/system/test_user.py</li>
+<li>again we import and use our BaseTest</li>
+<li>methods we could implement in our test&nbsp;</li>
+<ul>
+<li>test_register_user</li>
+<li>test_register_and_login</li>
+<li>test_register_duplicate_user</li>
+<ul>
+<li>you could probably think of one or two more</li>
+</ul>
+<li>
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+</pre>
+<pre style=
+"font-family: 'JetBrains Mono', monospace; font-size: 9.8pt;"><span style="color:#cc7832;">class </span>UserTest(BaseTest):<br />    <span style="color:#cc7832;">def </span><span style="color:#ffc66d;">test_register_user</span>(<span style="color:#94558d;">self</span>):<br />        <span style="color:#cc7832;">with </span><span style="color:#94558d;">self</span>.app() <span style="color:#cc7832;">as </span>c:<br />            <span style="color:#cc7832;">with </span><span style="color:#94558d;">self</span>.app_context(): # 1<br />                r = c.post(<span style="color:#6a8759;">'/register'</span><span style="color:#cc7832;">, </span><span style="color:#aa4926;">data</span>={<span style="color:#6a8759;">'username'</span>: <span style="color:#6a8759;">'test'</span><span style="color:#cc7832;">, </span><span style="color:#6a8759;">'password'</span>: <span style="color:#6a8759;">'1234'</span>}) # 2<br /><br />                <span style="color:#94558d;">self</span>.assertEqual(r.status_code<span style="color:#cc7832;">, </span><span style="color:#6897bb;">201</span>)<br />                <span style="color:#94558d;">self</span>.assertIsNotNone(UserModel.find_by_username(<span style="color:#6a8759;">'test'</span>))<br />                <span style="color:#94558d;">self</span>.assertDictEqual(<span style="color:#aa4926;">d1</span>={<span style="color:#6a8759;">'message'</span>: <span style="color:#6a8759;">'User created successfully.'</span>}<span style="color:#cc7832;">,<br /></span><span style="color:#cc7832;">                                     </span><span style="color:#aa4926;">d2</span>=json.loads(r.data))<br />    </pre></li>
+<li>Note:</li>
+<li>1) we need the self.app_context() to be initialized; before we
+can send requests, receive data</li>
+<li>2) register endpoint; example of a request, which should be
+successful</li>
+<li>then we can query the status code - it should be 201</li>
+<li>find_by_username should in our case with user 'test' not return
+None</li>
+<li>then we use assertDictEqual to check the response is as
+expected</li>
+</ul>
+<li>to see the other test methods implementation - see the
+respository code</li>
+<ul>
+<li>basically there are not much new; but assetIn might be new</li>
+</ul>
+</ul>
+<div><br /></div>
+<div>#98: Finalising user System tests</div>
+<div>
+<ul>
+<li>I try to keep it a tad more essential from here</li>
+<li>code:</li>
+<ul>
+<li>
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#cc7832;">def </span><span style=
+"color:#ffc66d;">test_register_and_login</span>(<span style=
+"color:#94558d;">self</span>):<br />    <span style=
+"color:#cc7832;">with </span><span style=
+"color:#94558d;">self</span>.app() <span style=
+"color:#cc7832;">as </span>c:<br />        <span style=
+"color:#cc7832;">with </span><span style=
+"color:#94558d;">self</span>.app_context():<br />            c.post(<span style="color:#6a8759;">'/register'</span><span style="color:#cc7832;">, </span><span style="color:#aa4926;">data</span>={<span style="color:#6a8759;">'username'</span>: <span style="color:#6a8759;">'test'</span><span style="color:#cc7832;">, </span><span style="color:#6a8759;">'password'</span>: <span style="color:#6a8759;">'1234'</span>})<br />            auth_request = c.post(<span style="color:#6a8759;">'/auth'</span><span style="color:#cc7832;">, </span><span style="color:#aa4926;">data</span>=json.dumps({<br />                <span style="color:#6a8759;">'username'</span>: <span style="color:#6a8759;">'test'</span><span style="color:#cc7832;">,<br /></span><span style="color:#cc7832;">                </span><span style="color:#6a8759;">'password'</span>: <span style="color:#6a8759;">'1234'<br /></span><span style="color:#6a8759;">            </span>})<span style="color:#cc7832;">, </span><span style="color:#aa4926;">headers</span>={<span style="color:#6a8759;">'Content-Type'</span>: <span style="color:#6a8759;">'application/json'</span>})<br /><br />            <span style="color:#94558d;">self</span>.assertIn(<span style="color:#6a8759;">'access_token'</span><span style="color:#cc7832;">, </span>json.loads(auth_request.data).keys())</pre></li>
+</ul>
+<li><span style="background-color: rgb(255, 255, 0);">here we have
+to send data in a json format</span>, we do that by the
+auth_request.data and <span style=
+"background-color: rgb(0, 255, 255);">assertIn</span></li>
+<ul>
+<li><span style="background-color: rgb(255, 255, 0);">we should
+make sure that we send it as data and not as form!</span></li>
+<li><span style=
+"background-color: rgb(0, 255, 255);">json.dumps</span> convert the
+dictionary to data</li>
+<li><span style="background-color: rgb(255, 255, 0);">we also have
+to pass in the header of 'Content-Type'</span></li>
+<li>the auth request is returning a dictionary with access_token
+with a quite long string as value;</li>
+<ul>
+<li>it is a JWT (an access token)</li>
+</ul>
+<li>we assert that the access data was returned</li>
+</ul>
+<li>when we authenticate we receive the access token</li>
+<ul>
+<li><span style="background-color: rgb(255, 255, 0);">we have to
+send back the token for any request which requires our
+login!</span></li>
+</ul>
+<li>in&nbsp;test_register_duplicate_user there is not too
+special<br /></li>
+<ul>
+<li>two post requests which are both equal</li>
+<li>for the second, we evaluate the returned result</li>
+<ul>
+<li>we can use assetEqual and assumet error code 400</li>
+<li>and we can query the expected error message using
+assertDictEqual</li>
+<li>see the code in the repository</li>
+</ul>
+</ul>
+<li>we tested in test_register_and_login what a client would do,
+with sending a /auth post request for example</li>
+</ul>
+<div>#99: Writing Store System tests</div>
+</div>
+<div>
+<ul>
+<li>next we look onto the systems tests for the store</li>
+<li>the order matters: we test this next, because an item needs a
+store to exist</li>
+<ul>
+<li>but actually the order is not too important</li>
+</ul>
+<li>what should/could we test</li>
+<ul>
+<li>create store</li>
+<li>create duplicate store</li>
+<li>delete store</li>
+<li>find store</li>
+<li>store not found</li>
+<li>store found with items</li>
+<li>store lists</li>
+<li>lists with items</li>
+<li>etc.</li>
+</ul>
+<li>from here it should be possible to implement these methods
+yourself</li>
+<li><span style="background-color: rgb(255, 255, 0);">like in
+essentially every other test, we will need the
+app_context()</span></li>
+<li>regarding the store resource post request there are
+<span style="background-color: rgb(255, 255, 0);">two failure
+scenarios - see exceptions</span></li>
+<ul>
+<li>the store already exists</li>
+<li>or an error occured saving the store</li>
+<li>otherwise we are returning the stores json and 201 status
+code</li>
+<li><span style="background-color: rgb(255, 255, 0);">see file
+resources/store.py post method</span></li>
+</ul>
+<li>for the create we</li>
+<ul>
+<li>create a store test</li>
+<li>check that it exists</li>
+<li>and status code 201</li>
+<li>json response as expected</li>
+</ul>
+<li>create_duplicate_store&nbsp;</li>
+<ul>
+<li>is quite easy - just two post requests and we assert that
+status should be 400</li>
+</ul>
+<li><span style="background-color: rgb(255, 255, 0);">status
+404</span></li>
+<ul>
+<li><span style="background-color: rgb(255, 255, 0);">most clients
+wouldn't look on your response message</span></li>
+</ul>
+<li>interesting in test_store_with_items_found:</li>
+<ul>
+<li>we save data to the database</li>
+<li>so we can see if it is accessible</li>
+<li>status code 200</li>
+<li>we check with the assertDictEqual with the values we
+expect</li>
+<li>etc.</li>
+</ul>
+<li>the tests are now a bit longer in time</li>
+<ul>
+<li>like 100 ms</li>
+<li><span style="background-color: rgb(255, 255, 0);">so we don't
+want too many system tests, since they consume more
+time</span></li>
+<li><span style="background-color: rgb(255, 255, 0);">testing an
+API is quite challanging in itself, you really want to pretend to
+be a user</span></li>
+<ul>
+<li>but on the other hand: you want to have as many unit tests as
+possible</li>
+<li>and you want to have as many integration tests as possible,
+compared to system tests!</li>
+</ul>
+<li>so you should have amount of</li>
+<ul>
+<li><font style="background-color: rgb(255, 255, 0);"><b>Unit Tests
+&gt; Integrations tests &gt; system tests!</b></font></li>
+<li><span style="background-color: rgb(255, 255, 0);">where
+possible</span></li>
+</ul>
+</ul>
+<li><span style="background-color: rgb(0, 255, 255);">about
+Mocking</span></li>
+<ul>
+<li><span style="background-color: rgb(0, 255, 255);">you can use
+it for running integration and unit tests in your
+resources</span></li>
+<li><span style="background-color: rgb(0, 255, 255);">we did not in
+this section, but you could do</span></li>
+</ul>
+<li>test_store_list()</li>
+<ul>
+<li>save the store to a database</li>
+<li>then get it and check response is correct</li>
+</ul>
+<li>for any other test cases like of test_store_with_items_list see
+code in the repository</li>
+</ul>
+</div>
+<div><br /></div>
+<div><br /></div>
 </div>
 </div>
 </en-note>]]></Content>
-        <ContentLength>12317</ContentLength>
+        <ContentLength>21949</ContentLength>
         <Created>1672394492851</Created>
-        <Updated>1672405380925</Updated>
+        <Updated>1673045085930</Updated>
         <Active>true</Active>
         <UpdateSequenceNumber>0</UpdateSequenceNumber>
         <NotebookGuid>0c5eda10-b64f-4bd0-b706-8f014d815707</NotebookGuid>
