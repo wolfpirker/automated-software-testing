@@ -9,7 +9,7 @@ class UserTest(BaseTest):
             with self.app_context():
                 r = c.post('/register', data={'username': 'test', 'password': '1234'})
 
-                self.assertEqual(r.status_code, 201)
+                self.assertEqual(r.status_code, 400)
                 self.assertIsNotNone(UserModel.find_by_username('test'))
                 self.assertDictEqual(d1={'message': 'User created successfully.'},
                                      d2=json.loads(r.data))

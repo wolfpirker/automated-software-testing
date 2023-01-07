@@ -426,14 +426,172 @@ this section, but you could do</span></li>
 code in the repository</li>
 </ul>
 </div>
+<div>#100: Writing our Item tests and testing
+authentification</div>
+<div>
+<ul>
+<li>for JWT authentication we need to put in resources/item.py as a
+import:</li>
+<ul>
+<li>
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#cc7832;">from </span>flask_jwt <span style=
+"color:#cc7832;">import </span>jwt_required</pre></li>
+<li>to make one endpoint require authentification we just put
+following attribute above the specific method</li>
+<ul>
+<li>
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#bbb529;">@jwt_required</span>()</pre></li>
+</ul>
+<li>so we put this in item.py above the get request&nbsp;</li>
+</ul>
+<li>in our test file we need to import all the three models</li>
+<ul>
+<li>see file system/test_item.py</li>
+</ul>
+<li>what do we want to test - see following methods for
+testing:</li>
+<ul>
+<li>
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+</pre>
+<pre style=
+"font-family: 'JetBrains Mono', monospace; font-size: 9.8pt;"><span style="color:#ffc66d;">test_item_no_auth</span>(<span style="color:#94558d;">self</span>)
+
+<span style=
+"font-size: 9.8pt; color: rgb(255, 198, 109);">test_item_not_found</span><span style="font-size: 9.8pt;">(</span><span style="font-size: 9.8pt; color: rgb(148, 85, 141);">self</span><span style="font-size: 9.8pt;">)</span></pre></li>
+<li>
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#ffc66d;">test_item_found</span>(<span style=
+"color:#94558d;">self</span>)</pre></li>
+<li><span style=
+"font-family: 'JetBrains Mono', monospace; font-size: 9.8pt; background-color: rgb(43, 43, 43); color: rgb(255, 198, 109);">
+test_delete_item</span><span style=
+"color: rgb(169, 183, 198); font-family: 'JetBrains Mono', monospace; font-size: 9.8pt; background-color: rgb(43, 43, 43);">(</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 9.8pt; background-color: rgb(43, 43, 43); color: rgb(148, 85, 141);">self</span><span style="color: rgb(169, 183, 198); font-family: 'JetBrains Mono', monospace; font-size: 9.8pt; background-color: rgb(43, 43, 43);">)</span></li>
+<li>
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#ffc66d;">test_create_item</span>(<span style=
+"color:#94558d;">self</span>)</pre></li>
+<li>
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style=
+"color:#ffc66d;">test_create_duplicate_item</span>(<span style=
+"color:#94558d;">self</span>)</pre></li>
+<li>
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#ffc66d;">test_put_item</span>(<span style=
+"color:#94558d;">self</span>)</pre></li>
+<li>
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style=
+"color:#ffc66d;">test_put_update_item</span>(<span style=
+"color:#94558d;">self</span>)</pre></li>
+<li><span style=
+"font-family: 'JetBrains Mono', monospace; font-size: 9.8pt; background-color: rgb(43, 43, 43); color: rgb(255, 198, 109);">
+test_item_list</span><span style=
+"color: rgb(169, 183, 198); font-family: 'JetBrains Mono', monospace; font-size: 9.8pt; background-color: rgb(43, 43, 43);">(</span><span style="font-family: 'JetBrains Mono', monospace; font-size: 9.8pt; background-color: rgb(43, 43, 43); color: rgb(148, 85, 141);">self</span><span style="color: rgb(169, 183, 198); font-family: 'JetBrains Mono', monospace; font-size: 9.8pt; background-color: rgb(43, 43, 43);">)</span></li>
+</ul>
+<li>when you are not authorised and authorisation is required, it
+will result in a 401 status error</li>
+<li><span style="background-color: rgb(255, 255, 0);">for some of
+the methods: we need a user in the database to actually make use of
+the JWT token</span></li>
+<ul>
+<li>only then we can create a successful auth request</li>
+<li>of the reson we get the data for the 'access_token'</li>
+<ul>
+<li>
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+auth_request = c.post(<span style=
+"color:#6a8759;">'/auth'</span><span style=
+"color:#cc7832;">, </span><span style=
+"color:#aa4926;">data</span>=json.dumps({<br />    <span style=
+"color:#6a8759;">'username'</span>: <span style=
+"color:#6a8759;">'test'</span><span style=
+"color:#cc7832;">,<br /></span><span style=
+"color:#cc7832;">    </span><span style=
+"color:#6a8759;">'password'</span>: <span style=
+"color:#6a8759;">'1234'<br /></span>})<span style=
+"color:#cc7832;">, </span><span style=
+"color:#aa4926;">headers</span>={<span style=
+"color:#6a8759;">'Content-Type'</span>: <span style=
+"color:#6a8759;">'application/json'</span>})</pre></li>
+<li>
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#94558d;">self</span>.auth_header = <span style=
+"color:#6a8759;">"JWT {}"</span>.format(json.loads(auth_request.data)[<span style="color:#6a8759;">'access_token'</span>])</pre></li>
+</ul>
+<li>Note: putting only the access token is not enough, you also
+need to put 'JWT ' in advance</li>
+<ul>
+<li>this is default with FlaskJWT</li>
+<li>there are ways of not making it required</li>
+</ul>
+</ul>
+<li>in the test_item.py we have the setUp method which should run
+before any actual test</li>
+<ul>
+<li>this line, makes sure this method is run!</li>
+<ul>
+<li>
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+<span style="color:#8888c6;">super</span>(ItemTest<span style=
+"color:#cc7832;">, </span><span style=
+"color:#94558d;">self</span>).setUp()</pre></li>
+<li>this is how it works in Python generally; you call the
+superclass and then call a method on it</li>
+</ul>
+</ul>
+<li>in the base_test.py we are putting this in setUpClass:</li>
+<ul>
+<li>
+<pre style=
+"background-color:#2b2b2b;color:#a9b7c6;font-family:'JetBrains Mono',monospace;font-size:9.8pt;">
+app.config[<span style=
+"color:#6a8759;">'PROPAGATE_EXCEPTIONS'</span>] = <span style=
+"color:#cc7832;">True</span></pre></li>
+<li>so an exception would be bubbled up through the Flask hierachy
+and caught by error handlers of flask
+(@app.errorhandler(JWTError)</li>
+<ul>
+<li>see app.py</li>
+</ul>
+<li>it is set for you automatically when Debug is true</li>
+</ul>
+<li>Note:</li>
+<ul>
+<li>for some reasons not all tests are passing; but since I just
+want to go through the course quick - since I am interested in
+another one, I just skip finding the reason<br /></li>
+<li>it might be resolved in the next section about Postman and
+Newman testing</li>
+<ul>
+<li>in the next section there will be also tests written in
+JavaScript</li>
+</ul>
+</ul>
+<li><br /></li>
+</ul>
 <div><br /></div>
-<div><br /></div>
+</div>
 </div>
 </div>
 </en-note>]]></Content>
-        <ContentLength>21949</ContentLength>
+        <ContentLength>28952</ContentLength>
         <Created>1672394492851</Created>
-        <Updated>1673045085930</Updated>
+        <Updated>1673109504310</Updated>
         <Active>true</Active>
         <UpdateSequenceNumber>0</UpdateSequenceNumber>
         <NotebookGuid>0c5eda10-b64f-4bd0-b706-8f014d815707</NotebookGuid>
